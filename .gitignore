@@ -103,7 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# idea supported filse
+# idea supported files
 colors.scheme.xml
 debugger.xml
 github.xml
