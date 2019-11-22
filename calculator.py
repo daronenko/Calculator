@@ -1,8 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, QTextEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QPushButton, QLineEdit
 from PyQt5.QtGui import QFont, QIcon
-import sys
-
-saveInput = ''
+from PyQt5.QtCore import Qt
 
 
 class CalculatorApp(QWidget):
@@ -12,183 +10,214 @@ class CalculatorApp(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.saveInput = ''
+        self.style = '''
+
+            CalculatorApp {
+                background-color: white;
+                font-family: sans-serif;
+            }
+
+            #mainButton {
+                background-color: #f1f3f4;
+                border-radius: 10px;
+                font-size: 13pt;
+            }
+
+            #mainButton:hover {
+                background-color: #d4dadd;
+            }
+
+            #minorButton {
+                background-color: #dfe1e5;
+                border-radius: 10px;
+                font-size: 13pt;
+            }
+
+            #minorButton:hover {
+                background-color: #c7cad1;
+            }
+
+            #resultButton {
+                background-color: #c33357;
+                color: white;
+                border: 1px;
+                border-radius: 10px;
+                font-size: 15pt;
+                font-weight: bold;
+            }
+
+            #resultButton:hover {
+                background-color: #a22a48;
+            }
+
+            #display {
+                background-color: #f1f3f4;
+                border: 1px solid #b3b3b3;
+                border-radius: 10px;
+                font-size: 40pt;
+                color: #a22a48;
+            }
+
+        '''
+
         self.setGeometry(400, 400, 350, 400)
         self.setWindowIcon(QIcon('calc.ico'))
         self.setWindowTitle('Calculator')
-        self.setStyleSheet('background-color: white')
+        self.setStyleSheet(self.style)
 
-        grid = QGridLayout()
+        self.grid = QGridLayout()
 
-        self.disp = QTextEdit()
-        grid.addWidget(self.disp, 1, 0, 1, 4)
+        self.disp = QLineEdit()
+        self.grid.addWidget(self.disp, 1, 0, 1, 4)
+        self.disp.setMinimumSize(330, 100)
+        self.disp.setObjectName('display')
+        self.disp.setAlignment(Qt.AlignRight)
+        self.disp.setText(self.saveInput)
         self.disp.setReadOnly(True)
-        self.disp.setText(saveInput)
-        self.disp.setFont(QFont("Arial", 40))
-        self.disp.setGeometry(10, 10, 340, 200)
-        self.disp.setStyleSheet('background-color: #f1f3f4; border: 1px solid #b3b3b3; border-radius: 10px')
 
-        leftBracketButton = QPushButton('(')
-        grid.addWidget(leftBracketButton, 2, 0)
-        leftBracketButton.setMinimumSize(82, 48)
-        leftBracketButton.setFont(QFont("Arial", 13))
-        leftBracketButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        leftBracketButton.clicked.connect(lambda: self.calculate('('))
+        self.leftBracketButton = QPushButton('(')
+        self.grid.addWidget(self.leftBracketButton, 2, 0)
+        self.leftBracketButton.setMinimumSize(82, 48)
+        self.leftBracketButton.setObjectName('minorButton')
+        self.leftBracketButton.clicked.connect(lambda: self.calculate('('))
 
-        rightBracketButton = QPushButton(')')
-        grid.addWidget(rightBracketButton, 2, 1)
-        rightBracketButton.setMinimumSize(82, 48)
-        rightBracketButton.setFont(QFont("Arial", 13))
-        rightBracketButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        rightBracketButton.clicked.connect(lambda: self.calculate(')'))
+        self.rightBracketButton = QPushButton(')')
+        self.grid.addWidget(self.rightBracketButton, 2, 1)
+        self.rightBracketButton.setMinimumSize(82, 48)
+        self.rightBracketButton.setObjectName('minorButton')
+        self.rightBracketButton.clicked.connect(lambda: self.calculate(')'))
 
-        powButton = QPushButton('x²')
-        grid.addWidget(powButton, 2, 2)
-        powButton.setMinimumSize(82, 48)
-        powButton.setFont(QFont("Arial", 13))
-        powButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        powButton.clicked.connect(lambda: self.calculate('pow'))
+        self.powButton = QPushButton('x²')
+        self.grid.addWidget(self.powButton, 2, 2)
+        self.powButton.setMinimumSize(82, 48)
+        self.powButton.setObjectName('minorButton')
+        self.powButton.clicked.connect(lambda: self.calculate('pow'))
 
-        deleteButton = QPushButton('AC')
-        grid.addWidget(deleteButton, 2, 3)
-        deleteButton.setMinimumSize(82, 48)
-        deleteButton.setFont(QFont("Arial", 13))
-        deleteButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        deleteButton.clicked.connect(lambda: self.calculate('AC'))
+        self.deleteButton = QPushButton('AC')
+        self.grid.addWidget(self.deleteButton, 2, 3)
+        self.deleteButton.setMinimumSize(82, 48)
+        self.deleteButton.setObjectName('minorButton')
+        self.deleteButton.clicked.connect(lambda: self.calculate('AC'))
 
-        sevenButton = QPushButton('7')
-        grid.addWidget(sevenButton, 3, 0)
-        sevenButton.setMinimumSize(82, 48)
-        sevenButton.setFont(QFont("Arial", 13))
-        sevenButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        sevenButton.clicked.connect(lambda: self.calculate('7'))
+        self.sevenButton = QPushButton('7')
+        self.grid.addWidget(self.sevenButton, 3, 0)
+        self.sevenButton.setMinimumSize(82, 48)
+        self.sevenButton.setObjectName('mainButton')
+        self.sevenButton.clicked.connect(lambda: self.calculate('7'))
 
-        eightButton = QPushButton('8')
-        grid.addWidget(eightButton, 3, 1)
-        eightButton.setMinimumSize(82, 48)
-        eightButton.setFont(QFont("Arial", 13))
-        eightButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        eightButton.clicked.connect(lambda: self.calculate('8'))
+        self.eightButton = QPushButton('8')
+        self.grid.addWidget(self.eightButton, 3, 1)
+        self.eightButton.setMinimumSize(82, 48)
+        self.eightButton.setObjectName('mainButton')
+        self.eightButton.clicked.connect(lambda: self.calculate('8'))
 
-        nineButton = QPushButton('9')
-        grid.addWidget(nineButton, 3, 2)
-        nineButton.setMinimumSize(82, 48)
-        nineButton.setFont(QFont("Arial", 13))
-        nineButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        nineButton.clicked.connect(lambda: self.calculate('9'))
+        self.nineButton = QPushButton('9')
+        self.grid.addWidget(self.nineButton, 3, 2)
+        self.nineButton.setMinimumSize(82, 48)
+        self.nineButton.setObjectName('mainButton')
+        self.nineButton.clicked.connect(lambda: self.calculate('9'))
 
-        divisionButton = QPushButton('÷')
-        grid.addWidget(divisionButton, 3, 3)
-        divisionButton.setMinimumSize(82, 48)
-        divisionButton.setFont(QFont("Arial", 15))
-        divisionButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        divisionButton.clicked.connect(lambda: self.calculate('/'))
+        self.divisionButton = QPushButton('÷')
+        self.grid.addWidget(self.divisionButton, 3, 3)
+        self.divisionButton.setMinimumSize(82, 48)
+        self.divisionButton.setObjectName('minorButton')
+        self.divisionButton.clicked.connect(lambda: self.calculate('/'))
 
-        fourButton = QPushButton('4')
-        grid.addWidget(fourButton, 4, 0)
-        fourButton.setMinimumSize(82, 48)
-        fourButton.setFont(QFont("Arial", 13))
-        fourButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        fourButton.clicked.connect(lambda: self.calculate('4'))
+        self.fourButton = QPushButton('4')
+        self.grid.addWidget(self.fourButton, 4, 0)
+        self.fourButton.setMinimumSize(82, 48)
+        self.fourButton.setObjectName('mainButton')
+        self.fourButton.clicked.connect(lambda: self.calculate('4'))
 
-        fiveButton = QPushButton('5')
-        grid.addWidget(fiveButton, 4, 1)
-        fiveButton.setMinimumSize(82, 48)
-        fiveButton.setFont(QFont("Arial", 13))
-        fiveButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        fiveButton.clicked.connect(lambda: self.calculate('5'))
+        self.fiveButton = QPushButton('5')
+        self.grid.addWidget(self.fiveButton, 4, 1)
+        self.fiveButton.setMinimumSize(82, 48)
+        self.fiveButton.setObjectName('mainButton')
+        self.fiveButton.clicked.connect(lambda: self.calculate('5'))
 
-        sixButton = QPushButton('6')
-        grid.addWidget(sixButton, 4, 2)
-        sixButton.setMinimumSize(82, 48)
-        sixButton.setFont(QFont("Arial", 13))
-        sixButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        sixButton.clicked.connect(lambda: self.calculate('6'))
+        self.sixButton = QPushButton('6')
+        self.grid.addWidget(self.sixButton, 4, 2)
+        self.sixButton.setMinimumSize(82, 48)
+        self.sixButton.setObjectName('mainButton')
+        self.sixButton.clicked.connect(lambda: self.calculate('6'))
 
-        multipButton = QPushButton('×')
-        grid.addWidget(multipButton, 4, 3)
-        multipButton.setMinimumSize(82, 48)
-        multipButton.setFont(QFont("Arial", 15))
-        multipButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        multipButton.clicked.connect(lambda: self.calculate('*'))
+        self.multipButton = QPushButton('×')
+        self.grid.addWidget(self.multipButton, 4, 3)
+        self.multipButton.setMinimumSize(82, 48)
+        self.multipButton.setObjectName('minorButton')
+        self.multipButton.clicked.connect(lambda: self.calculate('*'))
 
-        oneButton = QPushButton('1')
-        grid.addWidget(oneButton, 5, 0)
-        oneButton.setMinimumSize(82, 48)
-        oneButton.setFont(QFont("Arial", 13))
-        oneButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        oneButton.clicked.connect(lambda: self.calculate('1'))
+        self.oneButton = QPushButton('1')
+        self.grid.addWidget(self.oneButton, 5, 0)
+        self.oneButton.setMinimumSize(82, 48)
+        self.oneButton.setObjectName('mainButton')
+        self.oneButton.clicked.connect(lambda: self.calculate('1'))
 
-        twoButton = QPushButton('2')
-        grid.addWidget(twoButton, 5, 1)
-        twoButton.setMinimumSize(82, 48)
-        twoButton.setFont(QFont("Arial", 13))
-        twoButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        twoButton.clicked.connect(lambda: self.calculate('2'))
+        self.twoButton = QPushButton('2')
+        self.grid.addWidget(self.twoButton, 5, 1)
+        self.twoButton.setMinimumSize(82, 48)
+        self.twoButton.setObjectName('mainButton')
+        self.twoButton.clicked.connect(lambda: self.calculate('2'))
 
-        threeButton = QPushButton('3')
-        grid.addWidget(threeButton, 5, 2)
-        threeButton.setMinimumSize(82, 48)
-        threeButton.setFont(QFont("Arial", 13))
-        threeButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        threeButton.clicked.connect(lambda: self.calculate('3'))
+        self.threeButton = QPushButton('3')
+        self.grid.addWidget(self.threeButton, 5, 2)
+        self.threeButton.setMinimumSize(82, 48)
+        self.threeButton.setObjectName('mainButton')
+        self.threeButton.clicked.connect(lambda: self.calculate('3'))
 
-        minusButton = QPushButton('-')
-        grid.addWidget(minusButton, 5, 3)
-        minusButton.setMinimumSize(82, 48)
-        minusButton.setFont(QFont("Arial", 15))
-        minusButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        minusButton.clicked.connect(lambda: self.calculate('-'))
+        self.minusButton = QPushButton('-')
+        self.grid.addWidget(self.minusButton, 5, 3)
+        self.minusButton.setMinimumSize(82, 48)
+        self.minusButton.setObjectName('minorButton')
+        self.minusButton.clicked.connect(lambda: self.calculate('-'))
 
-        zeroButton = QPushButton('0')
-        grid.addWidget(zeroButton, 6, 0)
-        zeroButton.setMinimumSize(82, 48)
-        zeroButton.setFont(QFont("Arial", 13))
-        zeroButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        zeroButton.clicked.connect(lambda: self.calculate('0'))
+        self.zeroButton = QPushButton('0')
+        self.grid.addWidget(self.zeroButton, 6, 0)
+        self.zeroButton.setMinimumSize(82, 48)
+        self.zeroButton.setObjectName('mainButton')
+        self.zeroButton.clicked.connect(lambda: self.calculate('0'))
 
-        pointButton = QPushButton('.')
-        grid.addWidget(pointButton, 6, 1)
-        pointButton.setMinimumSize(82, 48)
-        pointButton.setFont(QFont("Arial", 15))
-        pointButton.setStyleSheet('background-color: #f1f3f4; border-radius: 10px')
-        pointButton.clicked.connect(lambda: self.calculate('.'))
+        self.pointButton = QPushButton('.')
+        self.grid.addWidget(self.pointButton, 6, 1)
+        self.pointButton.setMinimumSize(82, 48)
+        self.pointButton.setObjectName('mainButton')
+        self.pointButton.clicked.connect(lambda: self.calculate('.'))
 
-        resultButton = QPushButton('=')
-        grid.addWidget(resultButton, 6, 2)
-        resultButton.setMinimumSize(82, 48)
-        resultButton.setStyleSheet('background-color: #c33357; color: white; border: 1px; border-radius: 10px')
-        resultButton.setFont(QFont("Arial", 15))
-        resultButton.clicked.connect(lambda: self.calculate('='))
+        self.resultButton = QPushButton('=')
+        self.grid.addWidget(self.resultButton, 6, 2)
+        self.resultButton.setMinimumSize(82, 48)
+        self.resultButton.setObjectName('resultButton')
+        self.resultButton.clicked.connect(lambda: self.calculate('='))
 
-        plusButton = QPushButton('+')
-        grid.addWidget(plusButton, 6, 3)
-        plusButton.setMinimumSize(82, 48)
-        plusButton.setFont(QFont("Arial", 15))
-        plusButton.setStyleSheet('background-color: #dfe1e5; border-radius: 10px')
-        plusButton.clicked.connect(lambda: self.calculate('+'))
+        self.plusButton = QPushButton('+')
+        self.grid.addWidget(self.plusButton, 6, 3)
+        self.plusButton.setMinimumSize(82, 48)
+        self.plusButton.setObjectName('minorButton')
+        self.plusButton.clicked.connect(lambda: self.calculate('+'))
 
-        self.setLayout(grid)
+        self.setLayout(self.grid)
 
     def calculate(self, symbol):
-        global saveInput
         if symbol == 'AC':
-            saveInput = ''
+            self.saveInput = ''
         elif symbol == 'pow':
             try:
-                saveInput = str(pow(int(saveInput), 2))
+                self.saveInput = str(pow(int(self.saveInput), 2))
             except:
-                saveInput = ''
+                self.saveInput = ''
         elif symbol != '=':
-            saveInput += symbol
+            self.saveInput += symbol
         else:
             try:
-                saveInput = str(eval(saveInput))
+                self.saveInput = str(eval(self.saveInput))
             except:
-                saveInput = ''
-        self.disp.setText(saveInput)
+                self.saveInput = ''
+        self.disp.setText(self.saveInput)
 
 
 if __name__ == '__main__':
+    import sys
     app = QApplication(sys.argv)
     win = CalculatorApp()
     win.show()
